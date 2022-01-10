@@ -4,7 +4,7 @@ CHECKSUM=$(shell cat * | md5 | cut -c1-8)
 
 .PHONY: build-image
 build-image:
-	docker build -t ${NAME} .
+	docker build -t ${NAME}:test .
 
 .PHONY: all
 all:
