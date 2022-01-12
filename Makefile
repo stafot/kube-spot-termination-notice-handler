@@ -36,7 +36,7 @@ scan:
 .PHONY: deps
 deps:
 	sudo apt update && sudo apt install hub git
-	GO111MODULE=on go get k8s.io/release/cmd/release-notes
+	GO111MODULE=on go install k8s.io/release/cmd/release-notes@latest
 
 # Cut a release
 .PHONY: release
