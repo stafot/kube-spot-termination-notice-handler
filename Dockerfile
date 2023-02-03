@@ -1,6 +1,6 @@
-FROM python:3.9.13-alpine3.15
+FROM python:3.9.16-alpine3.17
 
-ARG KUBE_VERSION=1.21.0
+ARG KUBE_VERSION=1.23.16
 ENV HOME=/srv
 WORKDIR /srv
 

@@ -1,10 +1,14 @@
 NAME    := mattermost/kube-spot-termination-notice-handler
-TAG     := 1.21.0
+TAG     := 1.23.0
 CHECKSUM=$(shell cat * | md5 | cut -c1-8)
 
 .PHONY: build-image
 build-image:
 	docker build -t ${NAME}:test .
+
+.PHONY: build-image-with-tag
+build-image-with-tag:
+	docker build -t ${NAME}:${TAG} .
 
 .PHONY: all
 all:
@@ -31,7 +35,7 @@ push-tag:
 
 .PHONY: scan
 scan:
-	docker scan ${NAME}
+	docker scan ${NAME}:${TAG}
 
 .PHONY: deps
 deps:
