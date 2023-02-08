@@ -1,14 +1,9 @@
 FROM python:3.9.16-alpine3.17
-
-ARG KUBE_VERSION=1.23.16
 ENV HOME=/srv
 WORKDIR /srv
 
-RUN apk add --no-cache curl ca-certificates && \
+RUN apk add --no-cache kubectl --repository=http://dl-cdn.alpinelinux.org/alpine/edge/testing/ && \
     pip --no-cache-dir --disable-pip-version-check --quiet install awscli
-RUN curl -f -s -o /usr/local/bin/kubectl https://storage.googleapis.com/kubernetes-release/release/v${KUBE_VERSION}/bin/linux/amd64/kubectl && \
-    chmod +x /usr/local/bin/kubectl && \
-    kubectl version --client
 
 # Copy entrypoint.sh
 COPY entrypoint.sh .
