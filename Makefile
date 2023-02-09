@@ -1,38 +1,48 @@
 NAME    := mattermost/kube-spot-termination-notice-handler
-TAG     := 1.21.0
-CHECKSUM=$(shell cat * | md5 | cut -c1-8)
+TAG     := 1.23.0
 
 .PHONY: build-image
 build-image:
-	docker build -t ${NAME}:test .
+	@echo Building Mattermost-kube-spot-termination-handler Docker Image
+	echo $$DOCKERHUB_TOKEN | docker login --username $$DOCKERHUB_USERNAME --password-stdin && \
+	docker buildx build \
+	 --platform linux/arm64,linux/amd64 \
+	. -f Dockerfile -t $(NAME):test \
+	--no-cache \
+	--push
+
+
+.PHONY: build-image-with-tag
+build-image-with-tag:
+	@echo Building Mattermost-kube-spot-termination-handler Docker Image
+	echo $$DOCKERHUB_TOKEN | docker login --username $$DOCKERHUB_USERNAME --password-stdin && \
+	docker buildx build \
+	 --platform linux/arm64,linux/amd64 \
+	. -f Dockerfile -t $(NAME):$(TAG) \
+	--no-cache \
+	--push
 
 .PHONY: all
 all:
 	@$(MAKE) build-image
 	@$(MAKE) scan
-	@$(MAKE) push
+	@$(MAKE) push-image
 
-.PHONY: push
-push:
-	@echo "The CHECKSUM of all files in this folder is ${CHECKSUM}."
-	@echo "Pushing to Docker Hub..."
-	docker tag ${NAME} ${NAME}:${TAG}
-	docker tag ${NAME} ${NAME}:${TAG}_${CHECKSUM}
-	docker push ${NAME}:${TAG}_${CHECKSUM}
-	docker push ${NAME}:latest
+.PHONY: push-image-pr
+push-image-pr:
+	@echo Push Image PR
+	./scripts/push-image-pr.sh
 
-.PHONY: push-tag
-push-tag:
-	@echo "The CHECKSUM of all files in this folder is ${CHECKSUM}."
-	@echo "Pushing to Docker Hub..."
-	docker tag ${NAME} ${NAME}:${TAG}
-	docker tag ${NAME} ${NAME}:${TAG}_${CHECKSUM}
-	docker push ${NAME}:${TAG}_${CHECKSUM}
+.PHONY: push-image
+push-image:
+	@echo Push Image
+	./scripts/push-image.sh
 
 .PHONY: scan
 scan:
-	docker scan ${NAME}
+	docker scan ${NAME}:${TAG}
 
+# Install dependencies for release notes
 .PHONY: deps
 deps:
 	sudo apt update && sudo apt install hub git
