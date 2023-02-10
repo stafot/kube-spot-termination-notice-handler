@@ -1,5 +1,5 @@
 NAME    := mattermost/kube-spot-termination-notice-handler
-TAG     := 1.23.0
+TAG     := v1.23.4
 
 .PHONY: build-image
 build-image:
@@ -14,8 +14,6 @@ build-image:
 
 .PHONY: build-image-with-tag
 build-image-with-tag:
-	@echo Building Mattermost-kube-spot-termination-handler Docker Image
-	echo $$DOCKERHUB_TOKEN | docker login --username $$DOCKERHUB_USERNAME --password-stdin && \
 	docker buildx build \
 	 --platform linux/arm64,linux/amd64 \
 	. -f Dockerfile -t $(NAME):$(TAG) \
